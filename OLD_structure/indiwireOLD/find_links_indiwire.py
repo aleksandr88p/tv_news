@@ -63,5 +63,5 @@ def find_links_indiwire():
 
     return {'indiwire_film': indiwire_film, 'indiwire_tv': indiwire_tv}
 
-d = find_links_indiwire()
-print(json.dumps(d, indent=4))
+# d = find_links_indiwire()
+# print(json.dumps(d, indent=4))

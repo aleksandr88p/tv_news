@@ -69,6 +69,3 @@ def find_links_variety():
 
     return {'variety_film_news': variety_film_news, 'variety_tv_news': variety_tv_news}
 
-someDict = find_links_variety()
-
-print(json.dumps(someDict, indent=4))

@@ -101,10 +101,10 @@ links = [
 
 ]
 
-for link in links:
-    d = find_article_hollywoodreporter(table_name='hollywoodreporter_movies', link=link)
-    print(json.dumps(d, indent=4))
-    time.sleep(random.randint(1, 3))
+# for link in links:
+#     d = find_article_hollywoodreporter(table_name='hollywoodreporter_movies', link=link)
+#     print(json.dumps(d, indent=4))
+#     time.sleep(random.randint(1, 3))
 
 
 """"""
