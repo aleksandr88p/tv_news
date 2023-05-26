@@ -2,11 +2,11 @@ import mysql.connector
 from mysql.connector import Error
 
 config = {
-    'user': 'user_for_tv_and_news',
-    'password': 'mY@we$omeP@$$w0rd',
-    'host': '185.51.121.22',
-    'database': 'tv_news',
-    'port': '3306'
+    'user': 'none',
+    'password': 'none',
+    'host': 'none',
+    'database': 'none',
+    'port': 'none'
 }
 def create_connection():
     connection = None
