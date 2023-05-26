@@ -26,11 +26,12 @@ def process_links(find_article_function, links):
                     article_data = find_article_function(table_name, link)
                     insert_article(connection, table_name, article_data)
                     counters[table_name]['new_articles'] += 1
+                    # Pause for a random time between requests to avoid being blocked
+                    time.sleep(random.uniform(1, 3))
                 else:
                     counters[table_name]['duplicate_articles'] += 1
 
-                # Pause for a random time between requests to avoid being blocked
-                time.sleep(random.uniform(1, 5))
+
             except Exception as e:
                 print(f"Error processing link {link} in table {table_name}: {e}")
 

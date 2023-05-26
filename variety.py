@@ -1,3 +1,5 @@
+import json
+
 from bs4 import BeautifulSoup
 import datetime
 import requests
@@ -17,29 +19,20 @@ def find_links_variety():
         'Sec-Fetch-User': '?1',
     }
 
-    response = requests.get('https://variety.com/v/film/news/', headers=headers)
-    page1 = response.text
-    soup = BeautifulSoup(page1, 'lxml')
-    variety_film_news = []
-    all_links = soup.find('section', attrs={'class': 'latest-news-river'}).find_all('a',
-                                                                                    attrs={'class': 'c-title__link'})
-    for link in all_links:
-        title = link.text.strip()
-        url = link['href']
-        variety_film_news.append(url)
+    def get_links_from_page(url, headers):
+        response = requests.get(url, headers=headers)
+        soup = BeautifulSoup(response.text, 'lxml')
+        all_links = soup.find('section', attrs={'class': 'latest-news-river'}).find_all('a', attrs={'class': 'c-title__link'})
+        return [link['href'] for link in all_links]
 
-    response2 = requests.get('https://variety.com/v/tv/news/', headers=headers)
-    page2 = response2.text
-    soup2 = BeautifulSoup(page2, 'lxml')
-    variety_tv_news = []
-    all_links2 = soup2.find('section', attrs={'class': 'latest-news-river'}).find_all('a',
-                                                                                      attrs={'class': 'c-title__link'})
-    for link in all_links2:
-        title = link.text.strip()
-        url = link['href']
-        variety_tv_news.append(url)
+    variety_film_news = get_links_from_page('https://variety.com/v/film/news/', headers)
+    variety_film_news += get_links_from_page('https://variety.com/v/film/news/page/2/', headers)
+
+    variety_tv_news = get_links_from_page('https://variety.com/v/tv/news/', headers)
+    variety_tv_news += get_links_from_page('https://variety.com/v/tv/news/page/2/', headers)
 
     return {'variety_film_news': variety_film_news, 'variety_tv_news': variety_tv_news}
+
 
 
 def find_article_variety(table_name, link):
@@ -74,3 +67,6 @@ def find_article_variety(table_name, link):
 
     return {'table_name': table_name, 'title': title, 'link': link, 'article': article,
             'date_time': str(datetime.datetime.now())}
+
+
+# print(json.dumps(find_links_variety(), indent=4))

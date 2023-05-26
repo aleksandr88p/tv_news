@@ -51,5 +51,25 @@ Deadline (Film and TV)
 
 
 
-может тогда мне не нужна таблица, в которой только ссылки будут? сразу хранить все в одной таблице, и там уже проверять
+Processing articles from Deadline...
+Connect to mysql successful
+For deadline_film: Added 2 new articles, Found 10 duplicate articles
+For deadline_tv: Added 0 new articles, Found 12 duplicate articles
+Processing articles from Hollywood Reporter...
+Connect to mysql successful
+For hollywoodreporter_movies_news: Added 0 new articles, Found 16 duplicate articles
+For hollywoodreporter_tv_news: Added 0 new articles, Found 16 duplicate articles
+Processing articles from Indiwire...
+Connect to mysql successful
+error 'NoneType' object has no attribute 'find'
+cant find title in https://www.indiewire.com/video/lesli-linka-glatter-on-hbos-love-and-death-1234867332/
+error 'NoneType' object has no attribute 'find'
+cant find artcicle in https://www.indiewire.com/video/lesli-linka-glatter-on-hbos-love-and-death-1234867332/
+For indiwire_film: Added 12 new articles, Found 0 duplicate articles
+For indiwire_tv: Added 12 new articles, Found 0 duplicate articles
+Processing articles from Variety...
+Connect to mysql successful
+For variety_film_news: Added 15 new articles, Found 0 duplicate articles
+For variety_tv_news: Added 15 new articles, Found 0 duplicate articles
+
 

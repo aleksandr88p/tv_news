@@ -1,3 +1,5 @@
+import json
+
 import requests
 from bs4 import BeautifulSoup
 import datetime
@@ -17,31 +19,25 @@ def find_links_deadline():
         'Sec-Fetch-User': '?1',
     }
 
-    response1 = requests.get('https://deadline.com/v/film/', headers=headers)
-    page1 = response1.text
-    soup1 = BeautifulSoup(page1, 'lxml')
-    all_items1 = soup1.find_all('div', 'river-story')
-    deadline_film = []
+    def get_links_from_page(url, headers):
+        response = requests.get(url, headers=headers)
+        page = response.text
+        soup = BeautifulSoup(page, 'lxml')
+        all_items = soup.find_all('div', 'river-story')
+        links = []
+        for item in all_items:
+            link = item.find('h3', attrs={'class': 'c-title'}).find('a')['href']
+            links.append(link)
+        return links
 
-    for item in all_items1:
-        title = item.find('h3', attrs={'class': 'c-title'}).text.strip()
-        link = item.find('h3', attrs={'class': 'c-title'}).find('a')['href']
-        deadline_film.append(link)
+    deadline_film = get_links_from_page('https://deadline.com/v/film/', headers)
+    deadline_film += get_links_from_page('https://deadline.com/v/film/page/2/', headers)
 
-
-    response2 = requests.get('https://deadline.com/v/tv/', headers=headers)
-    page2 = response2.text
-    soup2 = BeautifulSoup(page2, 'lxml')
-    all_items2 = soup2.find_all('div', 'river-story')
-    deadline_tv = []
-
-    for item in all_items2:
-        title = item.find('h3', attrs={'class': 'c-title'}).text.strip()
-        link = item.find('h3', attrs={'class': 'c-title'}).find('a')['href']
-        deadline_tv.append(link)
-
+    deadline_tv = get_links_from_page('https://deadline.com/v/tv/', headers)
+    deadline_tv += get_links_from_page('https://deadline.com/v/tv/page/2/', headers)
 
     return {'deadline_film': deadline_film, 'deadline_tv': deadline_tv}
+
 
 def find_article_deadline(table_name, link):
     headers = {

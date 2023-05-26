@@ -1,6 +1,9 @@
+import json
+
 import requests
 from bs4 import BeautifulSoup
 import datetime
+
 
 def find_links_indiwire():
     headers = {
@@ -17,26 +20,23 @@ def find_links_indiwire():
         'Sec-Fetch-User': '?1',
     }
 
-    response1 = requests.get('https://www.indiewire.com/t/film/', headers=headers)
-    page1 = response1.text
-    soup1 = BeautifulSoup(page1, 'lxml')
-    all_items1 = soup1.find('div', attrs={'data-alias': 'cards__inner-wrapper'}).find_all('div', attrs={'data-alias': 'card__card-title'})
-    indiwire_film = []
-    for item in all_items1:
-        link = item.find('a')['href']
-        title = item.find('a').text.strip()
-        indiwire_film.append(link)
+    def get_links_from_page(url, headers):
+        response = requests.get(url, headers=headers)
+        page = response.text
+        soup = BeautifulSoup(page, 'lxml')
+        all_items = soup.find('div', attrs={'data-alias': 'cards__inner-wrapper'}).find_all('div', attrs={
+            'data-alias': 'card__card-title'})
+        links = []
+        for item in all_items:
+            link = item.find('a')['href']
+            links.append(link)
+        return links
 
+    indiwire_film = get_links_from_page('https://www.indiewire.com/t/film/', headers)
+    indiwire_film += get_links_from_page('https://www.indiewire.com/t/film/page/2/', headers)
 
-    response2 = requests.get('https://www.indiewire.com/t/tv/', headers=headers)
-    page2 = response2.text
-    soup2 = BeautifulSoup(page2, 'lxml')
-    all_items2 = soup2.find('div', attrs={'data-alias': 'cards__inner-wrapper'}).find_all('div', attrs={'data-alias': 'card__card-title'})
-    indiwire_tv = []
-    for item in all_items2:
-        link = item.find('a')['href']
-        title = item.find('a').text.strip()
-        indiwire_tv.append(link)
+    indiwire_tv = get_links_from_page('https://www.indiewire.com/t/tv/', headers)
+    indiwire_tv += get_links_from_page('https://www.indiewire.com/t/tv/page/2/', headers)
 
     return {'indiwire_film': indiwire_film, 'indiwire_tv': indiwire_tv}
 
@@ -64,17 +64,29 @@ def find_article_indiwire(table_name, link):
     title = ''
     article = ''
 
+    # sometimes data_component has different values
+    data_component = soup.find('div', attrs={"data-component": "template-article"}) or soup.find('div', attrs={
+        "data-component": "template-video"}) or soup.find('div', attrs={"data-component": "template-hub-package"})
+
     try:
-        title = soup.find('div', attrs={"data-component": "template-article"}).find('h1').text.strip()
+        title = data_component.find('h1').text.strip()
     except Exception as e:
         print(f'error {e}\ncant find title in {link}')
 
     try:
-        all_p = soup.find('div', attrs={"data-component": "template-article"}).find('div', attrs={'data-template': 'article'}).find_all('p')
+        if data_component.find('div', attrs={"data-template": 'article'}):
+            all_p = data_component.find('div', attrs={'data-template': 'article'}).find_all('p')
+        elif data_component.find('div', attrs={"data-template": 'hub'}):
+            all_p = data_component.find('div', attrs={'data-template': 'hub'}).find_all('p')
+
         for p in all_p:
             article += f"{p.text.strip()} "
+
     except Exception as e:
-        print(f'error {e}\ncant find artcicle in {link}')
+        print(f'error {e}\ncant find article in {link}')
 
     return {'table_name': table_name, 'title': title, 'link': link, 'article': article,
             'date_time': str(datetime.datetime.now())}
+
+
+

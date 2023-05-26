@@ -1,3 +1,5 @@
+import json
+
 import requests
 from bs4 import BeautifulSoup
 import datetime
@@ -17,29 +19,24 @@ def find_links_hollywoodreporter():
         'Sec-Fetch-Site': 'none',
         'Sec-Fetch-User': '?1',
     }
-    response = requests.get('https://www.hollywoodreporter.com/c/movies/movie-news/', headers=headers)
-    page1 = response.text
-    soup = BeautifulSoup(page1, 'lxml')
-    all_items = soup.find_all('div', attrs={"class": "story lrv-u-padding-tb-1 lrv-u-padding-tb-150@desktop // u-border-dotted-b lrv-u-border-color-grey-dark lrv-u-border-b-1"})
-    hollywoodreporter_movies_news = []
 
-    for item in all_items:
-        tit_and_url = item.find('h3').find('a')
-        title = tit_and_url.text.strip()
-        url = tit_and_url['href']
-        hollywoodreporter_movies_news.append(url)
+    def get_links_from_page(url, headers):
+        response = requests.get(url, headers=headers)
+        page = response.text
+        soup = BeautifulSoup(page, 'lxml')
+        all_items = soup.find_all('div', attrs={"class": "story lrv-u-padding-tb-1 lrv-u-padding-tb-150@desktop // u-border-dotted-b lrv-u-border-color-grey-dark lrv-u-border-b-1"})
+        links = []
+        for item in all_items:
+            tit_and_url = item.find('h3').find('a')
+            url = tit_and_url['href']
+            links.append(url)
+        return links
 
+    hollywoodreporter_movies_news = get_links_from_page('https://www.hollywoodreporter.com/c/movies/movie-news/', headers)
+    hollywoodreporter_movies_news += get_links_from_page('https://www.hollywoodreporter.com/c/movies/movie-news/page/2/', headers)
 
-    response2 = requests.get('https://www.hollywoodreporter.com/c/tv/tv-news/', headers=headers)
-    page2 = response2.text
-    soup2 = BeautifulSoup(page2, 'lxml')
-    all_items2 = soup2.find_all('div', attrs={"class": "story lrv-u-padding-tb-1 lrv-u-padding-tb-150@desktop // u-border-dotted-b lrv-u-border-color-grey-dark lrv-u-border-b-1"})
-    hollywoodreporter_tv_news = []
-    for item in all_items2:
-        tit_and_url = item.find('h3').find('a')
-        title = tit_and_url.text.strip()
-        url = tit_and_url['href']
-        hollywoodreporter_tv_news.append(url)
+    hollywoodreporter_tv_news = get_links_from_page('https://www.hollywoodreporter.com/c/tv/tv-news/', headers)
+    hollywoodreporter_tv_news += get_links_from_page('https://www.hollywoodreporter.com/c/tv/tv-news/page/2/', headers)
 
     return {'hollywoodreporter_movies_news': hollywoodreporter_movies_news, 'hollywoodreporter_tv_news': hollywoodreporter_tv_news}
 
@@ -89,3 +86,7 @@ def find_article_hollywoodreporter(table_name, link):
     return {'table_name': table_name, 'title': title, 'link': link, 'article': article,
             'date_time': str(datetime.datetime.now())}
 
+
+# links = find_links_hollywoodreporter()
+
+# print(json.dumps(d, indent=4))
