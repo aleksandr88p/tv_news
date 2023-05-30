@@ -49,27 +49,24 @@ Deadline (Film and TV)
 2) а как авмтоматизировать мою апишку. типа что бы каждый час парсил
 
 
+Написание кода, который идентифицирует перекрывающиеся статьи на основе ключевых слов или тем из каждого источника.
+Подача этих статей на вход GPT-3 для генерации коротких резюме.
+Настройка параметров GPT-3, чтобы добиться желаемого тона и стиля.
 
 
-Processing articles from Deadline...
-Connect to mysql successful
-For deadline_film: Added 2 new articles, Found 10 duplicate articles
-For deadline_tv: Added 0 new articles, Found 12 duplicate articles
-Processing articles from Hollywood Reporter...
-Connect to mysql successful
-For hollywoodreporter_movies_news: Added 0 new articles, Found 16 duplicate articles
-For hollywoodreporter_tv_news: Added 0 new articles, Found 16 duplicate articles
-Processing articles from Indiwire...
-Connect to mysql successful
-error 'NoneType' object has no attribute 'find'
-cant find title in https://www.indiewire.com/video/lesli-linka-glatter-on-hbos-love-and-death-1234867332/
-error 'NoneType' object has no attribute 'find'
-cant find artcicle in https://www.indiewire.com/video/lesli-linka-glatter-on-hbos-love-and-death-1234867332/
-For indiwire_film: Added 12 new articles, Found 0 duplicate articles
-For indiwire_tv: Added 12 new articles, Found 0 duplicate articles
-Processing articles from Variety...
-Connect to mysql successful
-For variety_film_news: Added 15 new articles, Found 0 duplicate articles
-For variety_tv_news: Added 15 new articles, Found 0 duplicate articles
+
+как происходит фильтрация
+Сбор данных: Сначала мы извлекаем все статьи из каждой из восьми баз данных. Мы сохраняем текст каждой статьи, её URL (для уникальной идентификации), название и источник.
+
+Предобработка текста: Затем мы проходим через каждую статью и удаляем все так называемые "стоп-слова" (часто встречающиеся слова, которые не несут много смысла, такие как "и", "в", "на" и т.д.). Это помогает сфокусироваться на более важных словах в каждой статье.
+
+Векторизация статей: Далее мы преобразуем каждую статью в вектор признаков. Векторизация - это процесс преобразования текста в числовой формат, который может быть анализирован алгоритмами машинного обучения. Мы используем метод, называемый TF-IDF (Term Frequency-Inverse Document Frequency), который учитывает не только количество вхождений каждого слова в статье, но и то, насколько часто оно встречается в других статьях.
+
+Сравнение статей: Затем мы сравниваем каждую статью со всеми остальными, используя косинусное сходство. Это мера, которая позволяет нам определить, насколько похожи два вектора (в нашем случае, две статьи). Мы устанавливаем порог сходства - если сходство двух статей выше этого порога, мы считаем их похожими.
+
+Группировка похожих статей: Мы создаем группы похожих статей. Если статья A похожа на статью B, а статья B похожа на статью C, мы группируем их все вместе, даже если статья A и C не превышают порога сходства напрямую.
+
+Фильтрация групп: Наконец, мы отфильтровываем группы, чтобы выводить только те, которые содержат статьи из разных источников. Если количество уникальных источников в группе меньше половины от общего количества источников, мы пропускаем эту группу.
+
 
 
