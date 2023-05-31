@@ -1,5 +1,5 @@
 import json
-
+import re
 import mysql.connector
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -40,6 +40,22 @@ def preprocess_articles(articles_df):
     article_vectors = vectorizer.fit_transform(articles_df['article_text'])
     return article_vectors
 
+# def preprocess_articles(articles_df):
+#     stop_words = set(stopwords.words('english'))
+#
+#     articles_df['article_text'] = articles_df['article_text'].apply(lambda x: ' '.join(
+#         [word for word in word_tokenize(x) if word.casefold() not in stop_words]
+#     ))
+#
+#     # Remove all non-alphanumeric characters using regex
+#     articles_df['article_text'] = articles_df['article_text'].apply(lambda x: re.sub(r'\W+', ' ', x))
+#
+#     # Convert text to lower case
+#     articles_df['article_text'] = articles_df['article_text'].str.lower()
+#
+#     vectorizer = TfidfVectorizer()
+#     article_vectors = vectorizer.fit_transform(articles_df['article_text'])
+#     return article_vectors
 def find_similar_articles(article_vectors, threshold):
     similarities = cosine_similarity(article_vectors)
     similar_articles_dict = {}
@@ -77,11 +93,12 @@ def create_article_groups_dict(similar_articles_dict, all_articles):
             continue
         c += 1
         group_key = f"Articles group {c}"
-        article_groups_dict[group_key] = list(group)
+        article_groups_dict[group_key] = [(article_url, all_articles.loc[all_articles['url'] == article_url]['article_text'].values[0]) for article_url in group]
     return article_groups_dict
 
 
-conn = connect_to_database("none", "none", "none", "none")
+# conn = connect_to_database("none", "none", "none", "none")
+
 
 table_names = ['deadline_film', 'deadline_tv', 'hollywoodreporter_movies_news',
                'hollywoodreporter_tv_news', 'indiwire_film', 'indiwire_tv',
@@ -92,6 +109,6 @@ all_articles = pd.concat(dataframes, ignore_index=True)
 
 article_vectors = preprocess_articles(all_articles)
 similar_articles_dict = find_similar_articles(article_vectors, 0.5)
-d = create_article_groups_dict(similar_articles_dict, all_articles)
+article_grupped = create_article_groups_dict(similar_articles_dict, all_articles)
 
-print(json.dumps(d, indent=4))
+# print(json.dumps(article_grupped, indent=4))
