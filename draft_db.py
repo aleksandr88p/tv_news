@@ -60,6 +60,26 @@ sources = ['deadline_film', 'deadline_tv', 'hollywoodreporter_movies_news',
 #         print("Соединение с БД закрыто.")
 
 
-"""
+import mysql.connector
+from datetime import datetime
 
-"""
+# Создание подключения к базе данных
+# cnx = mysql.connector.connect(user=DB_USER, password=DB_PASSWORD, host=DB_HOST, database=DB_NAME)
+#
+# # Получение объекта cursor
+# cursor = cnx.cursor()
+#
+#
+#
+# # Создание таблицы
+# cursor.execute("""
+# CREATE TABLE IF NOT EXISTS box_office_articles (
+#     id INT AUTO_INCREMENT PRIMARY KEY,
+#     article_date DATE,
+#     article_link VARCHAR(255),
+#     article_content LONGTEXT
+# );
+# """)
+#
+# # Закрытие соединения
+# cnx.close()
