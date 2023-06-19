@@ -40,7 +40,7 @@ def process_articles():
 
 def run_schedule():
     schedule.every(5).hours.do(process_articles)
-    schedule.every().day.do(process_box_oficce)
+    schedule.every(5).hours.do(process_box_oficce)
     while True:
         schedule.run_pending()
         time.sleep(1)
